@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 
 
 public class PS4 {
@@ -32,8 +33,8 @@ public class PS4 {
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setBorder(BorderFactory.createTitledBorder(" Tablice: "));
         splitPane.setLeftComponent(scrollPane);
-
-        JTable table = new JTable(/* ... tutaj dodaj adapter: TableModel ... */);
+        Adapter adapter =new Adapter(new RealData(0));
+        JTable table = new JTable(/* ... tutaj dodaj adapter: TableModel ...*/adapter);
         scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder(" Zawartość: "));
         splitPane.setRightComponent(scrollPane);
@@ -64,7 +65,6 @@ public class PS4 {
                     int size = Integer.parseInt(value);
                     baza.add(new RealData(size));
                 } catch(Exception ex) {
-                	//FIXME add exception handling!
                     LOGGER.log(null, "Exception happened", ex);
                 };
             }
@@ -76,9 +76,21 @@ public class PS4 {
                 try{
                     baza.remove(idx);
                 } catch(Exception ex) { 
-                	//FIXME add exception handling!
                 	LOGGER.log(null, "Exception happened", ex);
                 };
+            }
+        });
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                    int row = table.getSelectedRow();
+                    int column = table.getSelectedColumn();
+
+                    Object result = table.getValueAt(row, column);
+                    adapter.setValueAt(result, row, column);
+                }
             }
         });
 
@@ -87,12 +99,7 @@ public class PS4 {
             public void valueChanged(ListSelectionEvent e) {
                 int idx = list.getSelectedIndex();
                 if (idx >= 0) {
-                    /* ... */
-                    /*Data data=baza.getElementAt(idx);
-                    for(int i=0;i<data.size();i++)
-                    {
-                        data.get(i);
-                    }*/
+                    adapter.newData((RealData)baza.getElementAt(idx));
                 }
             }
         });
