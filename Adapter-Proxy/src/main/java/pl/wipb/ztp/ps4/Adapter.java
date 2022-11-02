@@ -4,13 +4,12 @@ import javax.swing.table.AbstractTableModel;
 
 public class Adapter extends AbstractTableModel {
     private String[] columns={"Index","Value"};
-    private RealData data;
-    public Adapter(RealData data){
-        this.data=data;
+    private Data data=null;
+    public Adapter(){
     }
     @Override
     public int getRowCount() {
-        return data.size();
+        return data==null ? 0 : data.size();
     }
 
     @Override
@@ -31,11 +30,11 @@ public class Adapter extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex){
         data.set(rowIndex, Integer.valueOf((String) aValue));
-        fireTableStructureChanged();
+        fireTableCellUpdated(rowIndex, columnIndex);
     } 
     
     @Override
-    public Class getColumnClass(int columnIndex){
+    public Class<?> getColumnClass(int columnIndex){
         return columns[columnIndex].getClass();
     }
     
@@ -44,7 +43,7 @@ public class Adapter extends AbstractTableModel {
         return columnIndex==0 ? columns[0] : columns[1];
     }
 
-    public void newData(RealData data) {
+    public void newData(Data data) {
         this.data=data;
         fireTableStructureChanged();
     }

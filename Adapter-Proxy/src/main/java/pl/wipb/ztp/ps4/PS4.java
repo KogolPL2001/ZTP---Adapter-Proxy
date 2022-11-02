@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableModel;
 
 
 public class PS4 {
@@ -23,7 +22,7 @@ public class PS4 {
         }
 
         final Baza baza = new Baza();
-
+        Adapter adapter =new Adapter();
         final JFrame frame = new JFrame("Zadanie 4");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JSplitPane splitPane = new JSplitPane();
@@ -33,7 +32,6 @@ public class PS4 {
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setBorder(BorderFactory.createTitledBorder(" Tablice: "));
         splitPane.setLeftComponent(scrollPane);
-        Adapter adapter =new Adapter(new RealData(0));
         JTable table = new JTable(/* ... tutaj dodaj adapter: TableModel ...*/adapter);
         scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder(" Zawartość: "));
@@ -63,7 +61,8 @@ public class PS4 {
                         JOptionPane.INFORMATION_MESSAGE);
                 try{
                     int size = Integer.parseInt(value);
-                    baza.add(new RealData(size));
+                    baza.add(new Proxy(size));
+                    adapter.newData((Data)baza.getElementAt(baza.getSize()-1));
                 } catch(Exception ex) {
                     LOGGER.log(null, "Exception happened", ex);
                 };
@@ -80,26 +79,13 @@ public class PS4 {
                 };
             }
         });
-        table.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
-                    int row = table.getSelectedRow();
-                    int column = table.getSelectedColumn();
-
-                    Object result = table.getValueAt(row, column);
-                    adapter.setValueAt(result, row, column);
-                }
-            }
-        });
 
         // zmiana wyboru na liście powoduje odświeżenie tabeli
         list.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 int idx = list.getSelectedIndex();
                 if (idx >= 0) {
-                    adapter.newData((RealData)baza.getElementAt(idx));
+                    adapter.newData((Data)baza.getElementAt(idx));
                 }
             }
         });
