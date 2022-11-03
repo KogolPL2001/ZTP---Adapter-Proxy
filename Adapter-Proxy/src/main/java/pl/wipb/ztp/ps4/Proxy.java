@@ -21,6 +21,20 @@ public class Proxy implements Data{
     public int size() {
         return size;
     }
+    @Override
+    public Data copy() {
+        if(data==null){
+            data=new RealData(size);
+        }
+        return data.copy();
+    }
+    @Override
+    public void cutCopies() {
+        if(data==null)
+            return;
+        else
+            data.cutCopies();
+    }
 
     
 }

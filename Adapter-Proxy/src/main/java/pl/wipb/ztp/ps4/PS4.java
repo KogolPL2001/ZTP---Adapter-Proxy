@@ -42,8 +42,10 @@ public class PS4 {
         JMenuBar bar = new JMenuBar();
         JButton add = new JButton("Dodaj tablicę");
         JButton del = new JButton("Usuń tablicę");
+        JButton copy = new JButton("Kopiuj tablicę");
         bar.add(add);
         bar.add(del);
+        bar.add(copy);
 
         frame.setJMenuBar(bar);
 
@@ -79,7 +81,13 @@ public class PS4 {
                 };
             }
         });
-
+        
+        copy.addActionListener((ActionEvent e)->{
+            int idx=list.getSelectedIndex();
+            if(idx>=0){
+                baza.add((Data)baza.getElementAt(idx).copy());
+            }
+        });
         // zmiana wyboru na liście powoduje odświeżenie tabeli
         list.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
